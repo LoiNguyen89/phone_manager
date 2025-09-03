@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import ra.edu.model.entity.Product;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public interface ProductService {
     Product save(Product product);
@@ -16,4 +17,5 @@ public interface ProductService {
     Page<Product> searchByStock(Integer stock, Pageable pageable);
     Product findById(Integer id);
     boolean existsByName(String name);
+    Optional<Product> findByName(String name);
 }

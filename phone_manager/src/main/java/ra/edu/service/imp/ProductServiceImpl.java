@@ -9,6 +9,7 @@ import ra.edu.repo.ProductRepository;
 import ra.edu.service.ProductService;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -52,11 +53,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findById(Integer id) {
-        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
     @Override
     public boolean existsByName(String name) {
         return productRepository.existsByName(name);
+    }
+
+    @Override
+    public Optional<Product> findByName(String name) {
+        return productRepository.findByName(name);
     }
 }

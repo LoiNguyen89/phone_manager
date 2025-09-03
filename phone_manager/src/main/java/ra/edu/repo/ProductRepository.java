@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ra.edu.model.entity.Product;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
@@ -19,6 +20,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
 
     Page<Product> findByStockGreaterThanEqual(Integer stock, Pageable pageable);
+
+    Optional<Product> findByName(String name);
 
 
 }

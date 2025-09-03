@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách khách hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            background-color: #f0f2f5;
+        }
+        .sidebar {
+            width: 240px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1e1f29, #2a2c39);
+            color: #e9ecef;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 1.5rem 1rem;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 4px 0 12px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar h4 {
+            font-weight: bold;
+            margin-bottom: 2rem;
+            color: #0d6efd;
+            text-align: center;
+            text-shadow: 0 0 8px rgba(13, 110, 253, 0.7);
+        }
+
+        .sidebar .nav-link {
+            color: #adb5bd;
+            margin-bottom: 0.75rem;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            transition: all 0.25s ease-in-out;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-link i {
+            font-size: 1.1rem;
+            margin-right: 8px;
+            color: #6c757d;
+            transition: color 0.25s;
+        }
+
+        .sidebar .nav-link.active,
+        .sidebar .nav-link:hover {
+            background: rgba(13, 110, 253, 0.15);
+            color: #0d6efd;
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(13, 110, 253, 0.4);
+        }
+
+        .sidebar .nav-link:hover i {
+            color: #0d6efd;
+        }
+
+        .signout {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1rem;
+            right: 1rem;
+        }
+
+        .signout .nav-link {
+            background: rgba(220, 53, 69, 0.1);
+            color: #ff4d6d;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            transition: 0.25s;
+            text-align: center;
+        }
+
+        .signout .nav-link:hover {
+            background: #dc3545;
+            color: #fff;
+            box-shadow: 0 0 12px rgba(220, 53, 69, 0.7);
+        }
+        .sidebar h4 { font-weight: bold; margin-bottom: 2rem; color: #ffc107; }
+        .sidebar .nav-link { color: #adb5bd; margin-bottom: 0.5rem; }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover { color: #ffc107; font-weight: bold; }
+        .signout { position: absolute; bottom: 1rem; left: 1rem; }
+        .content { margin-left: 240px; padding: 2rem; width: 100%; }
+
+        img.product-img {
+            max-height: 80px;
+            border-radius: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h4>Mobile <span class="text-warning">SHOP</span></h4>
+    <nav class="nav flex-column">
+        <a class="nav-link" href="/dashboard"><i class="bi bi-grid-fill me-2"></i> Dashboard</a>
+        <a class="nav-link active" href="/customers"><i class="bi bi-people-fill me-2"></i> Customers</a>
+        <a class="nav-link" href="/products"><i class="bi bi-phone-fill me-2"></i> Products</a>
+        <a class="nav-link" href="/invoices"><i class="bi bi-receipt-cutoff me-2"></i> Invoices</a>
+    </nav>
+    <div class="signout">
+        <a href="/logout" class="nav-link text-danger"><i class="bi bi-box-arrow-right me-2"></i> Sign out</a>
+    </div>
+</div>
+
+
+<div class="content">
+    <div class="container-fluid">
+        <h2 class="mb-4 text-center">Danh sách khách hàng</h2>
+
+        <div class="d-flex justify-content-between mb-3">
+            <a href="/customers/add" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Thêm khách hàng
+            </a>
+        </div>
+
+        <div class="table-responsive shadow-sm bg-white rounded">
+            <table class="table table-bordered table-hover align-middle text-center mb-0">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Ảnh</th>
+                    <th>Tên</th>
+                    <th>Điện thoại</th>
+                    <th>Email</th>
+                    <th>Địa chỉ</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${customers.content}">
+                    <td th:text="${c.id}"></td>
+                    <td>
+                        <img th:if="${c.image != null}" th:src="${c.image}" alt="Ảnh khách hàng"
+                             class="img-thumbnail product-img">
+                        <span th:if="${c.image == null}">—</span>
+                    </td>
+                    <td th:text="${c.name}"></td>
+                    <td th:text="${c.phone}"></td>
+                    <td th:text="${c.email}"></td>
+                    <td th:text="${c.address}"></td>
+                    <td>
+                        <a th:href="@{'/customers/edit/' + ${c.id} + '?page=' + ${customers.number}}"
+                           class="btn btn-warning btn-sm">
+                            <i class="bi bi-pencil-fill"></i> Sửa
+                        </a>
+
+                        <a th:href="@{'/customers/delete/' + ${c.id} + '?page=' + ${customers.number}}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Bạn có chắc muốn xóa KH này?');">
+                            <i class="bi bi-trash-fill"></i> Xóa
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${customers.content.size() == 0}">
+                    <td colspan="6" class="text-center text-muted">Không có khách hàng nào</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <nav class="mt-3" th:if="${customers.totalPages > 1}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${customers.first}? 'disabled'">
+                    <a class="page-link" th:href="@{'/customers?page=0'}">First</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, customers.totalPages - 1)}"
+                    th:classappend="${i == customers.number}? 'active'">
+                    <a class="page-link" th:href="@{'/customers?page=' + ${i}}" th:text="${i+1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${customers.last}? 'disabled'">
+                    <a class="page-link" th:href="@{'/customers?page=' + (${customers.totalPages - 1})}">Last</a>
+
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -28,6 +28,9 @@ public class Customer {
     @Column(length = 255)
     private String address;
 
+    @Column(nullable = false, length = 255)
+    private String image;
+
     @Column(name = "is_deleted", columnDefinition = "bit(1) default 0")
     private Boolean isDeleted = false;
 

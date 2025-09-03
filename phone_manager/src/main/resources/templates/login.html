@@ -10,7 +10,7 @@
 <div class="card shadow-lg p-4 rounded-4" style="width: 400px;">
     <h2 class="text-center mb-4 text-primary">Đăng nhập</h2>
 
-    <!-- Form đăng nhập -->
+
     <form method="post" action="/login">
         <div class="mb-3">
             <label class="form-label fw-bold">Tên đăng nhập</label>
@@ -23,10 +23,9 @@
         <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
     </form>
 
-    <!-- Hiển thị lỗi -->
+
     <p th:if="${error}" th:text="${error}" class="text-danger mt-3 text-center"></p>
 
-    <!-- Link sang trang đăng ký -->
     <p class="mt-4 text-center">
         Chưa có tài khoản?
         <a href="/register" class="text-decoration-none fw-bold">Đăng ký ngay</a>

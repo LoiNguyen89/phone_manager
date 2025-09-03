@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -37,10 +38,24 @@ public class Invoice {
     private Status status = Status.PENDING;
 
 
+
+
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
-    private List<InvoiceDetail> invoiceDetails;
+    private List<InvoiceDetail> invoiceDetails = new ArrayList<>();
+
 
     public enum Status {
         PENDING, CONFIRMED, SHIPING, COMPLETED, CANCELED
     }
+
+    public void calculateTotalAmount() {
+        if (invoiceDetails != null && !invoiceDetails.isEmpty()) {
+            this.totalAmount = invoiceDetails.stream()
+                    .map(d -> d.getProduct().getPrice().multiply(BigDecimal.valueOf(d.getQuantity())))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+        } else {
+            this.totalAmount = BigDecimal.ZERO;
+        }
+    }
+
 }

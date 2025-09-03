@@ -12,49 +12,101 @@
             display: flex;
             background-color: #f0f2f5;
         }
-        /* Sidebar */
         .sidebar {
-            width: 220px;
+            width: 240px;
             height: 100vh;
-            background-color: #343a40;
-            color: #fff;
+            background: linear-gradient(180deg, #1e1f29, #2a2c39); /* gradient tối */
+            color: #e9ecef;
             position: fixed;
             top: 0;
             left: 0;
-            padding: 1rem;
+            padding: 1.5rem 1rem;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 4px 0 12px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease;
         }
+
         .sidebar h4 {
             font-weight: bold;
             margin-bottom: 2rem;
-            color: #ffc107;
+            color: #0d6efd;
+            text-align: center;
+            text-shadow: 0 0 8px rgba(13, 110, 253, 0.7);
         }
+
         .sidebar .nav-link {
             color: #adb5bd;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            transition: all 0.25s ease-in-out;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
         }
+
+        .sidebar .nav-link i {
+            font-size: 1.1rem;
+            margin-right: 8px;
+            color: #6c757d;
+            transition: color 0.25s;
+        }
+
         .sidebar .nav-link.active,
         .sidebar .nav-link:hover {
-            color: #ffc107;
-            font-weight: bold;
+            background: rgba(13, 110, 253, 0.15);
+            color: #0d6efd;
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(13, 110, 253, 0.4);
         }
+
+        .sidebar .nav-link:hover i {
+            color: #0d6efd;
+        }
+
         .signout {
             position: absolute;
-            bottom: 1rem;
+            bottom: 1.5rem;
             left: 1rem;
+            right: 1rem;
         }
+
+        .signout .nav-link {
+            background: rgba(220, 53, 69, 0.1);
+            color: #ff4d6d;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            transition: 0.25s;
+            text-align: center;
+        }
+
+        .signout .nav-link:hover {
+            background: #dc3545;
+            color: #fff;
+            box-shadow: 0 0 12px rgba(220, 53, 69, 0.7);
+        }
+        .sidebar h4 { font-weight: bold; margin-bottom: 2rem; color: #ffc107; }
+        .sidebar .nav-link { color: #adb5bd; margin-bottom: 0.5rem; }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover { color: #ffc107; font-weight: bold; }
+        .signout { position: absolute; bottom: 1rem; left: 1rem; }
+        .content { margin-left: 240px; padding: 2rem; width: 100%; }
+
         .content {
             margin-left: 240px;
             padding: 2rem;
             width: 100%;
         }
+
         img.product-img {
             max-height: 80px;
             border-radius: 5px;
         }
+
         .sort-btn a {
             margin-left: 0.5rem;
             text-decoration: none;
         }
+
         .sort-btn a.active {
             font-weight: bold;
             color: #0d6efd;
@@ -68,9 +120,9 @@
     <h4>Mobile <span class="text-warning">SHOP</span></h4>
     <nav class="nav flex-column">
         <a class="nav-link" href="/dashboard"><i class="bi bi-grid-fill me-2"></i> Dashboard</a>
-        <a class="nav-link" href="#"><i class="bi bi-people-fill me-2"></i> Users</a>
+        <a class="nav-link" href="/customers"><i class="bi bi-people-fill me-2"></i> Customers</a>
         <a class="nav-link active" href="/products"><i class="bi bi-phone-fill me-2"></i> Products</a>
-        <a class="nav-link" href="#"><i class="bi bi-receipt-cutoff me-2"></i> Invoices</a>
+        <a class="nav-link" href="/invoices"><i class="bi bi-receipt-cutoff me-2"></i> Invoices</a>
     </nav>
     <div class="signout">
         <a href="/logout" class="nav-link text-danger"><i class="bi bi-box-arrow-right me-2"></i> Sign out</a>
@@ -78,32 +130,79 @@
 </div>
 
 <!-- Nội dung chính -->
+
 <div class="content">
     <div class="container-fluid">
-        <h2 class="mb-4 text-center">📱 Danh sách sản phẩm</h2>
+        <h2 class="mb-4 text-center">Danh sách sản phẩm</h2>
+        <div th:if="${error}"
+             class="alert alert-danger alert-dismissible fade show d-flex align-items-center shadow-sm rounded-3 py-2 px-3 mb-3"
+             role="alert"
+             style="max-width: 600px; margin: 0 auto;">
+            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-        <!-- Thêm sản phẩm & Sắp xếp -->
+        <!-- Thêm sản phẩm, Sắp xếp & Tìm kiếm -->
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
             <a href="/products/add" class="btn btn-success mb-2">
                 <i class="bi bi-plus-circle"></i> Thêm sản phẩm
             </a>
-            <div class="mb-3 d-flex align-items-center flex-wrap">
-                <span class="me-2 fw-semibold">Sắp xếp theo :</span>
-                <a th:href="@{'/products?page=0&sortDir=asc'}"
-                   th:classappend="${sortDir == 'asc'} ? 'btn btn-sm btn-primary me-1 active' : 'btn btn-sm btn-outline-primary me-1'">
-                    Giá tăng dần
-                </a>
-                <a th:href="@{'/products?page=0&sortDir=desc'}"
-                   th:classappend="${sortDir == 'desc'} ? 'btn btn-sm btn-primary me-1 active' : 'btn btn-sm btn-outline-primary me-1'">
-                    Giá giảm dần
-                </a>
-                <a th:href="@{'/products?page=0'}"
-                   th:classappend="${sortDir == 'none'} ? 'btn btn-sm btn-primary active' : 'btn btn-sm btn-outline-secondary'">
-                    Bỏ sắp xếp
-                </a>
+
+            <!-- 🔍 Form tìm kiếm -->
+            <div class="mb-3 d-flex flex-wrap gap-2 justify-content-end">
+                <!-- Search by Brand -->
+                <form th:action="@{/products/search/brand}" method="get" class="d-flex">
+                    <input type="text" name="brand" class="form-control form-control-sm me-1"
+                           placeholder="Tìm theo Brand" th:value="${keyword}">
+                    <button type="submit" class="btn btn-sm btn-primary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+
+                <!-- Search by Stock -->
+                <form th:action="@{/products/search/stock}" method="get" class="d-flex">
+                    <input type="number" name="stock" class="form-control form-control-sm me-1"
+                           placeholder="Tồn kho ≥" th:value="${stock}">
+                    <button type="submit" class="btn btn-sm btn-primary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+
+                <!-- Search by Price -->
+                <form th:action="@{/products/search/price}" method="get" class="d-flex">
+                    <input type="number" name="min" step="0.01" class="form-control form-control-sm me-1"
+                           placeholder="Giá min" th:value="${min}">
+                    <input type="number" name="max" step="0.01" class="form-control form-control-sm me-1"
+                           placeholder="Giá max" th:value="${max}">
+                    <button type="submit" class="btn btn-sm btn-primary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+
             </div>
 
+
         </div>
+
+
+        <!-- Sort -->
+        <div class="mb-2 d-flex align-items-center flex-wrap justify-content-end">
+            <span class="me-2 fw-semibold"></span>
+            <a th:href="@{'/products?page=0&sortDir=asc'}"
+               th:classappend="${sortDir == 'asc'} ? 'btn btn-sm btn-primary me-1 active' : 'btn btn-sm btn-outline-primary me-1'">
+                Giá tăng dần
+            </a>
+            <a th:href="@{'/products?page=0&sortDir=desc'}"
+               th:classappend="${sortDir == 'desc'} ? 'btn btn-sm btn-primary me-1 active' : 'btn btn-sm btn-outline-primary me-1'">
+                Giá giảm dần
+            </a>
+            <a th:href="@{'/products?page=0'}"
+               th:classappend="${sortDir == 'none'} ? 'btn btn-sm btn-primary active' : 'btn btn-sm btn-outline-secondary'">
+                Bỏ sắp xếp
+            </a>
+        </div>
+
 
         <!-- Bảng danh sách -->
         <div class="table-responsive shadow-sm bg-white rounded">
@@ -123,7 +222,8 @@
                 <tr th:each="p : ${products.content}">
                     <td th:text="${p.id}"></td>
                     <td>
-                        <img th:if="${p.image != null}" th:src="${p.image}" alt="Ảnh sản phẩm" class="img-thumbnail product-img">
+                        <img th:if="${p.image != null}" th:src="${p.image}" alt="Ảnh sản phẩm"
+                             class="img-thumbnail product-img">
                         <span th:if="${p.image == null}">—</span>
                     </td>
                     <td th:text="${p.name}"></td>
@@ -131,10 +231,27 @@
                     <td th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'COMMA')}"></td>
                     <td th:text="${p.stock}"></td>
                     <td>
-                        <a th:href="@{'/products/edit/' + ${p.id}}" class="btn btn-warning btn-sm me-1">
+                        <a th:href="@{/products/edit/{id}(id=${p.id},
+                                   page=${products.number},
+                                   sortDir=${sortDir},
+                                   searchType=${searchType},
+                                   keyword=${keyword},
+                                   stock=${stock},
+                                   min=${min},
+                                   max=${max})}"
+                           class="btn btn-warning btn-sm">
                             <i class="bi bi-pencil-fill"></i> Sửa
                         </a>
-                        <a th:href="@{'/products/delete/' + ${p.id}}" class="btn btn-danger btn-sm"
+
+
+                        <a th:href="@{/products/delete/{id}(id=${p.id},
+                                   page=${products.number},
+                                   sortDir=${sortDir},
+                                   searchType=${searchType},
+                                   keyword=${keyword},
+                                   stock=${stock},
+                                   min=${min},
+                                   max=${max})}" class="btn btn-danger btn-sm"
                            onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
                             <i class="bi bi-trash-fill"></i> Xóa
                         </a>
@@ -146,24 +263,85 @@
                 </tbody>
             </table>
         </div>
-
         <!-- Phân trang -->
-        <nav class="mt-3">
+        <nav class="mt-3" th:if="${totalPages > 1}">
             <ul class="pagination justify-content-center">
+
+                <!-- First -->
                 <li th:classappend="${currentPage == 0} ? 'disabled'" class="page-item">
-                    <a th:href="@{'/products?page=0&sortDir=' + ${sortDir}}" class="page-link">First</a>
+                    <a class="page-link"
+                       th:if="${searchType == 'brand'}"
+                       th:href="@{'/products/search/brand?brand=' + ${keyword} + '&page=0&sortDir=' + ${sortDir}}">
+                        First
+                    </a>
+                    <a class="page-link"
+                       th:if="${searchType == 'price'}"
+                       th:href="@{'/products/search/price?min=' + ${min} + '&max=' + ${max} + '&page=0&sortDir=' + ${sortDir}}">
+                        First
+                    </a>
+                    <a class="page-link"
+                       th:if="${searchType == 'stock'}"
+                       th:href="@{'/products/search/stock?stock=' + ${stock} + '&page=0&sortDir=' + ${sortDir}}">
+                        First
+                    </a>
+                    <a class="page-link"
+                       th:if="${searchType == null}"
+                       th:href="@{'/products?page=0&sortDir=' + ${sortDir}}">
+                        First
+                    </a>
                 </li>
 
+                <!-- Số trang -->
                 <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                     th:classappend="${i == currentPage} ? 'active'" class="page-item">
-                    <a th:href="@{'/products?page=' + ${i} + '&sortDir=' + ${sortDir}}" class="page-link" th:text="${i + 1}"></a>
+
+                    <a class="page-link"
+                       th:if="${searchType == 'brand'}"
+                       th:href="@{'/products/search/brand?brand=' + ${keyword} + '&page=' + ${i} + '&sortDir=' + ${sortDir}}"
+                       th:text="${i + 1}"></a>
+
+                    <a class="page-link"
+                       th:if="${searchType == 'price'}"
+                       th:href="@{'/products/search/price?min=' + ${min} + '&max=' + ${max} + '&page=' + ${i} + '&sortDir=' + ${sortDir}}"
+                       th:text="${i + 1}"></a>
+
+                    <a class="page-link"
+                       th:if="${searchType == 'stock'}"
+                       th:href="@{'/products/search/stock?stock=' + ${stock} + '&page=' + ${i} + '&sortDir=' + ${sortDir}}"
+                       th:text="${i + 1}"></a>
+
+                    <a class="page-link"
+                       th:if="${searchType == null}"
+                       th:href="@{'/products?page=' + ${i} + '&sortDir=' + ${sortDir}}"
+                       th:text="${i + 1}"></a>
                 </li>
 
+                <!-- Last -->
                 <li th:classappend="${currentPage >= totalPages - 1} ? 'disabled'" class="page-item">
-                    <a th:href="@{'/products?page=' + (${totalPages - 1}) + '&sortDir=' + ${sortDir}}" class="page-link">Last</a>
+                    <a class="page-link"
+                       th:if="${searchType == 'brand'}"
+                       th:href="@{'/products/search/brand?brand=' + ${keyword} + '&page=' + (${totalPages - 1}) + '&sortDir=' + ${sortDir}}">
+                        Last
+                    </a>
+                    <a class="page-link"
+                       th:if="${searchType == 'price'}"
+                       th:href="@{'/products/search/price?min=' + ${min} + '&max=' + ${max} + '&page=' + (${totalPages - 1}) + '&sortDir=' + ${sortDir}}">
+                        Last
+                    </a>
+                    <a class="page-link"
+                       th:if="${searchType == 'stock'}"
+                       th:href="@{'/products/search/stock?stock=' + ${stock} + '&page=' + (${totalPages - 1}) + '&sortDir=' + ${sortDir}}">
+                        Last
+                    </a>
+                    <a class="page-link"
+                       th:if="${searchType == null}"
+                       th:href="@{'/products?page=' + (${totalPages - 1}) + '&sortDir=' + ${sortDir}}">
+                        Last
+                    </a>
                 </li>
             </ul>
         </nav>
+
 
     </div>
 </div>

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ra.edu.model.entity.Admin;
 import ra.edu.service.AdminService;
 
+
 @Controller
 @RequiredArgsConstructor
 public class AdminController {
@@ -20,7 +21,7 @@ public class AdminController {
 
     @GetMapping("/login")
     public String showLoginForm() {
-        return "login"; // login.html trong templates
+        return "login";
     }
 
     @PostMapping("/login")
@@ -62,14 +63,15 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/dashboard")
+
+
+
+    @GetMapping("/admin/dashboard")
     public String dashboard(HttpSession session, Model model) {
         Admin admin = (Admin) session.getAttribute("loggedAdmin");
-        if (admin == null) {
-            return "redirect:/login";
-        }
+        if (admin == null) return "redirect:/login";
         model.addAttribute("admin", admin);
-        return "dashboard"; // dashboard.html
+        return "admin/dashboard";
     }
 
     @GetMapping("/logout")
@@ -77,4 +79,6 @@ public class AdminController {
         session.invalidate();
         return "redirect:/login";
     }
+
+
 }

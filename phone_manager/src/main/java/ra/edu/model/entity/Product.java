@@ -36,7 +36,7 @@ public class Product {
     @Column(name = "is_deleted", columnDefinition = "bit(1) default 0")
     private Boolean isDeleted = false;
 
-    // 1 product có thể xuất hiện trong nhiều chi tiết hóa đơn
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<InvoiceDetail> invoiceDetails;
 }
