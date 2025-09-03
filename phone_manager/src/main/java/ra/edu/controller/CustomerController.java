@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ra.edu.model.entity.Customer;
 import ra.edu.service.CustomerService;
 import ra.edu.service.imp.CloudinaryService;
@@ -125,10 +126,16 @@ public class CustomerController {
 
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id, @RequestParam(defaultValue = "0") int page) {
-        customerService.deleteById(id);
+    public String deleteCustomer(@PathVariable Integer id, RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") int page) {
+        try {
+            customerService.deleteById(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa khách hàng thành công");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/customers?page=" + page;
     }
+
 
     private boolean setImage(Customer customer, MultipartFile file, Model model, boolean isNew) {
         try {

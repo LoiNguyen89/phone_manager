@@ -33,8 +33,16 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void deleteById(Integer id) {
-        customerRepository.deleteById(id);
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng"));
+
+        if (customer.getInvoices() != null && !customer.getInvoices().isEmpty()) {
+            throw new RuntimeException("Không thể xoá khách hàng này vì đã có hoá đơn");
+        }
+
+        customerRepository.delete(customer);
     }
+
 
     @Override
     public boolean existsByName(String name) {
